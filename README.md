@@ -21,6 +21,15 @@ Dahuin Jung<sup>2&dagger;</sup>
 
 ---
 
+## Highlights
+
+- **Unified benchmark**: LIBERO-Para extends [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO) with 4,000+ paraphrased instructions across 10 evaluation scenarios, all in a single repository.
+- **Multi-model evaluation**: 6 VLA models integrated with per-model conda environments, standalone eval scripts, and step-by-step guides — clone, install, and run.
+- **Original LIBERO compatible**: All original LIBERO suites (Spatial, Object, Goal, LIBERO-10, LIBERO-90) are preserved and can be evaluated from the same codebase.
+- **PRIDE metric**: A new difficulty-aware metric that goes beyond binary success rate, giving more credit for succeeding on harder paraphrases.
+
+---
+
 ## Evaluation Guides
 
 Each model is evaluated using a custom standalone script under [`eval_scripts/examples/`](eval_scripts/examples/), which directly interfaces with the model's inference server or loads the model directly. Follow each model's guide for environment setup and evaluation.
