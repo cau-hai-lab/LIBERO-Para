@@ -34,15 +34,15 @@ Dahuin Jung<sup>2&dagger;</sup>
 
 Each model is evaluated using a custom standalone script under [`eval_scripts/examples/`](eval_scripts/examples/), which directly interfaces with the model's inference server or loads the model directly. Follow each model's guide for environment setup and evaluation.
 
-| Model | Guide | Script | Status |
-|:------|:------|:-------|:------:|
-| OpenVLA-OFT (Goal) | [Guide](eval_guides/openvla_oft_goal.md) | [`eval_openvla_oft.py`](eval_scripts/examples/eval_openvla_oft.py) | &#9989; |
-| OpenVLA-OFT (Mixed) | [Guide](eval_guides/openvla_oft_mixed.md) | [`eval_openvla_oft.py`](eval_scripts/examples/eval_openvla_oft.py) | &#9989; |
-| Pi0.5 | [Guide](eval_guides/pi05.md) | — | &#9203; |
-| X-VLA | [Guide](eval_guides/x_vla.md) | [`eval_x_vla.py`](eval_scripts/examples/eval_x_vla.py) | &#9989; |
-| VLA-Adapter | [Guide](eval_guides/vla_adapter.md) | [`eval_vla_adapter.py`](eval_scripts/examples/eval_vla_adapter.py) | &#9989; |
-| Xiaomi-Robotics-0 | [Guide](eval_guides/xiaomi_robotics_0.md) | [`eval_xiaomi_robotics_0.py`](eval_scripts/examples/eval_xiaomi_robotics_0.py) | &#9989; |
-| *More coming soon...* | | | |
+| Model | Params | Architecture | Release | Guide | Script | Status |
+|:------|:------:|:-------------|:-------:|:------|:-------|:------:|
+| OpenVLA-OFT (Goal) | 7.5B | Parallel Decoding | 2025.03 | [Guide](eval_guides/openvla_oft_goal.md) | [`eval_openvla_oft.py`](eval_scripts/examples/eval_openvla_oft.py) | &#9989; |
+| OpenVLA-OFT (Mixed) | 7.5B | Parallel Decoding | 2025.03 | [Guide](eval_guides/openvla_oft_mixed.md) | [`eval_openvla_oft.py`](eval_scripts/examples/eval_openvla_oft.py) | &#9989; |
+| Pi0.5 | 3.3B | VLM + Action Expert | 2025.09 | [Guide](eval_guides/pi05.md) | — | &#9203; |
+| X-VLA | 0.9B | Soft-prompted | 2026.01 | [Guide](eval_guides/x_vla.md) | [`eval_x_vla.py`](eval_scripts/examples/eval_x_vla.py) | &#9989; |
+| VLA-Adapter | 0.6B | Bridge-based | 2025.09 | [Guide](eval_guides/vla_adapter.md) | [`eval_vla_adapter.py`](eval_scripts/examples/eval_vla_adapter.py) | &#9989; |
+| Xiaomi-Robotics-0 | 4.7B | VLM + Action Expert | 2026.02 | [Guide](eval_guides/xiaomi_robotics_0.md) | [`eval_xiaomi_robotics_0.py`](eval_scripts/examples/eval_xiaomi_robotics_0.py) | &#9989; |
+| *More coming soon...* | | | | | | |
 
 > **Adding a new model?** Each eval script follows the same pattern: pre-create 10 LIBERO envs, swap in paraphrased instructions, and query the model. Clone the model repo into `eval_scripts/`, write a lightweight eval script in `eval_scripts/examples/`, and add a guide in `eval_guides/`. See any existing script as a template. We plan to continuously add more VLA models.
 
