@@ -1,0 +1,12 @@
+{
+  "model_name": "Xiaomi-Robotics-0",
+  "model_family": "xiaomi_mot",
+  "seed": 7,
+  "host": "0.0.0.0",
+  "port": 10086,
+  "max_steps": 300,
+  "replan_steps": 10,
+  "bddl_dir": "/data3/hai_chanyoung/LIBERO/libero/libero/bddl_files/libero_ref",
+  "total_tasks": 4092,
+  "timestamp": "2026-03-04T13:22:36"
+}

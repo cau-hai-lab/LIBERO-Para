@@ -1,0 +1,33 @@
+*~
+.hydra
+*pyc
+datasets
+results
+outputs/*
+/MUJOCO_LOG.TXT
+wandb
+experiments/
+experiments_saved/
+clip/
+gpt/
+bert/
+logs/
+
+*.mp4
+libero.egg-info/
+libero_para.egg-info/
+.vscode/
+
+# Eval logs (keep example results, ignore new runs)
+logs_para/*
+!logs_para/example_xiaomi-robotics-0/
+
+# Metrics output
+metrics/output/
+
+# Cloned model codebases
+eval_scripts/openvla-oft/
+eval_scripts/pi05/
+eval_scripts/x-vla/
+eval_scripts/vla-adapter/
+eval_scripts/xiaomi-robotics-0/
