@@ -12,8 +12,7 @@ Dahuin Jung†
 <sub>* Equal contribution &nbsp;&nbsp; † Corresponding author</sub>
 
 <p>
-<a href="#">[Paper]</a> &nbsp;
-<a href="#">[Project Page]</a>
+[Paper (coming soon)]
 </p>
 
 <img src="images/LIBERO-Para.png" width="900">
