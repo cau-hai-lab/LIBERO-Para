@@ -43,7 +43,7 @@ Each model is evaluated using a custom standalone script under [`eval_scripts/ex
 | VLA-Adapter | [Guide](eval_guides/vla_adapter.md) | [`eval_vla_adapter.py`](eval_scripts/examples/eval_vla_adapter.py) | &#9989; |
 | Xiaomi-Robotics-0 | [Guide](eval_guides/xiaomi_robotics_0.md) | [`eval_xiaomi_robotics_0.py`](eval_scripts/examples/eval_xiaomi_robotics_0.py) | &#9989; |
 
-> **Adding a new model?** Each eval script follows the same pattern: pre-create 10 LIBERO envs, swap in paraphrased instructions, and query the model. Clone the model repo into `eval_scripts/`, write a lightweight eval script in `eval_scripts/examples/`, and add a guide in `eval_guides/`. See any existing script as a template.
+> **Adding a new model?** Each eval script follows the same pattern: pre-create 10 LIBERO envs, swap in paraphrased instructions, and query the model. Clone the model repo into `eval_scripts/`, write a lightweight eval script in `eval_scripts/examples/`, and add a guide in `eval_guides/`. See any existing script as a template. We plan to continuously add more VLA models.
 
 ---
 
