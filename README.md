@@ -5,7 +5,7 @@
 
 <a href="https://cykim05.github.io">Chanyoung Kim</a>*,
 Minwoo Kim*,
-Minseok Kang,
+<a href="https://github.com/min-soku">Minseok Kang</a>,
 Hyunwoo Kim,
 Dahuin Jung†
 
