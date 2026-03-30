@@ -4,7 +4,7 @@
 <p><b>A Diagnostic Benchmark and Metrics for Paraphrase Robustness in VLA Models</b></p>
 
 <a href="https://cykim05.github.io">Chanyoung Kim</a>*,
-Minwoo Kim*,
+<a href="https://github.com/kmw5531">Minwoo Kim</a>*,
 <a href="https://github.com/min-soku">Minseok Kang</a>,
 Hyunwoo Kim,
 Dahuin Jung†
