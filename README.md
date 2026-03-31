@@ -13,7 +13,7 @@ Dahuin Jung<sup>2&dagger;</sup>
 <br>
 <sub>&#42; Equal contribution &nbsp;&nbsp; &dagger; Corresponding author</sub>
 
-<p>[Paper (coming soon)]</p>
+<p><a href="https://arxiv.org/pdf/2603.28301">[Paper]</a></p>
 
 <img src="images/LIBERO-Para.png" width="900">
 
