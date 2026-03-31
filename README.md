@@ -27,7 +27,7 @@ Dahuin Jung<sup>2&dagger;</sup>
 <img src="images/examples.png" width="450">
 </div>
 
-LIBERO-Para organizes paraphrases along two orthogonal axes: **object-referring expressions** (how objects are described) and **action-referring expressions** (how actions are instructed). Each axis defines independent paraphrase types, and the overlapping region represents **compositional paraphrases** where both axes are combined. See the [paper](https://arxiv.org/pdf/2603.28301) for details.
+Robotic manipulation instructions are fundamentally structured around *what to act on* and *how to act*. LIBERO-Para decomposes paraphrases along these two essential axes: **object-referring expressions** and **action-referring expressions**. Each axis is independently varied, and composing both yields **compositional paraphrases**. See the [paper](https://arxiv.org/pdf/2603.28301) for details.
 
 ---
 
