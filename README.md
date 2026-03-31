@@ -24,7 +24,7 @@ Dahuin Jung<sup>2&dagger;</sup>
 ## Paraphrase Taxonomy
 
 <div align="center">
-<img src="images/examples.png" width="650">
+<img src="images/examples.png" width="450">
 </div>
 
 LIBERO-Para organizes paraphrases along two orthogonal axes: **object-referring expressions** (how objects are described) and **action-referring expressions** (how actions are instructed). Each axis defines independent paraphrase types, and the overlapping region represents **compositional paraphrases** where both axes are combined. See the [paper](https://arxiv.org/pdf/2603.28301) for details.
