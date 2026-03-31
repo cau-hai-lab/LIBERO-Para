@@ -407,6 +407,8 @@ def main():
     parser.add_argument("--max_steps", type=int, default=300)
     parser.add_argument("--num_steps_wait", type=int, default=10)
     parser.add_argument("--replan_steps", type=int, default=10)
+    parser.add_argument("--mode", type=str, default="auto", choices=["auto", "para", "original"],
+                        help="para: libero_para paraphrases, original: standard LIBERO suites, auto: detect from bddl filenames")
     parser.add_argument("--max_tasks", type=int, default=-1, help="Limit number of tasks for debugging")
     parser.add_argument("--save_video", action="store_true", help="Save replay videos")
     args = parser.parse_args()
@@ -415,58 +417,74 @@ def main():
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    # ---- 1. Scan paraphrase bddl files ----
-    bddl_files = sorted(
-        [f for f in os.listdir(args.bddl_dir) if f.endswith(".bddl")]
-    )
-    logging.info(f"Found {len(bddl_files)} paraphrase bddl files")
+    # ---- 1. Scan bddl files ----
+    bddl_files = sorted([f for f in os.listdir(args.bddl_dir) if f.endswith(".bddl")])
+    logging.info(f"Found {len(bddl_files)} bddl files")
 
     if args.max_tasks > 0:
-        bddl_files = bddl_files[: args.max_tasks]
+        bddl_files = bddl_files[:args.max_tasks]
         logging.info(f"Limited to {len(bddl_files)} tasks (debug mode)")
 
-    # Parse all bddl files: extract eval_id and instruction
-    tasks = []
-    for bddl_file in bddl_files:
-        bddl_path = os.path.join(args.bddl_dir, bddl_file)
-        instruction = parse_bddl_instruction(bddl_path)
-        eval_id = extract_eval_id(bddl_file)
-        tasks.append(
-            {"bddl_file": bddl_file, "instruction": instruction, "eval_id": eval_id}
-        )
+    # Auto-detect mode
+    mode = args.mode
+    if mode == "auto":
+        mode = "para" if any("_eval" in f for f in bddl_files) else "original"
+    logging.info(f"Mode: {mode}")
 
-    eval_ids_needed = sorted(set(t["eval_id"] for t in tasks))
-    logging.info(f"Eval IDs needed: {eval_ids_needed}")
-
-    # ---- 2. Load init states (per eval_id) ----
-    init_states = {}
-    for eval_id in eval_ids_needed:
-        init_path = os.path.join(args.init_dir, f"eval{eval_id}.pruned_init")
-        init_states[eval_id] = torch.load(init_path)
-        logging.info(
-            f"  Loaded init_states for eval{eval_id}: {len(init_states[eval_id])} states"
-        )
-
-    # ---- 3. Create envs (10 envs from libero_goal bddl) ----
     from libero.libero.envs import OffScreenRenderEnv
 
-    goal_bddl_files = sorted(
-        [f for f in os.listdir(args.goal_bddl_dir) if f.endswith(".bddl")]
-    )
-    logging.info(f"Found {len(goal_bddl_files)} goal bddl files")
+    if mode == "para":
+        tasks = []
+        for bddl_file in bddl_files:
+            bddl_path = os.path.join(args.bddl_dir, bddl_file)
+            instruction = parse_bddl_instruction(bddl_path)
+            eval_id = extract_eval_id(bddl_file)
+            tasks.append({"bddl_file": bddl_file, "instruction": instruction, "eval_id": eval_id})
 
-    envs = {}
-    for idx, goal_bddl in enumerate(goal_bddl_files):
-        goal_bddl_path = os.path.join(args.goal_bddl_dir, goal_bddl)
-        env = OffScreenRenderEnv(
-            bddl_file_name=goal_bddl_path,
-            camera_heights=LIBERO_ENV_RESOLUTION,
-            camera_widths=LIBERO_ENV_RESOLUTION,
-        )
-        env.seed(args.seed)
-        env.reset()
-        envs[idx] = env
-        logging.info(f"  Created env {idx}: {goal_bddl}")
+        eval_ids_needed = sorted(set(t["eval_id"] for t in tasks))
+        logging.info(f"Eval IDs needed: {eval_ids_needed}")
+
+        init_states = {}
+        for eval_id in eval_ids_needed:
+            init_path = os.path.join(args.init_dir, f"eval{eval_id}.pruned_init")
+            init_states[eval_id] = torch.load(init_path)
+            logging.info(f"  Loaded init_states for eval{eval_id}: {len(init_states[eval_id])} states")
+
+        goal_bddl_files = sorted([f for f in os.listdir(args.goal_bddl_dir) if f.endswith(".bddl")])
+        envs = {}
+        for idx, goal_bddl in enumerate(goal_bddl_files):
+            goal_bddl_path = os.path.join(args.goal_bddl_dir, goal_bddl)
+            env = OffScreenRenderEnv(
+                bddl_file_name=goal_bddl_path,
+                camera_heights=LIBERO_ENV_RESOLUTION,
+                camera_widths=LIBERO_ENV_RESOLUTION,
+            )
+            env.seed(args.seed)
+            env.reset()
+            envs[idx] = env
+            logging.info(f"  Created env {idx}: {goal_bddl}")
+    else:
+        tasks = []
+        envs = {}
+        init_states = {}
+        for idx, bddl_file in enumerate(bddl_files):
+            bddl_path = os.path.join(args.bddl_dir, bddl_file)
+            instruction = parse_bddl_instruction(bddl_path)
+            tasks.append({"bddl_file": bddl_file, "instruction": instruction, "eval_id": idx})
+            env = OffScreenRenderEnv(
+                bddl_file_name=bddl_path,
+                camera_heights=LIBERO_ENV_RESOLUTION,
+                camera_widths=LIBERO_ENV_RESOLUTION,
+            )
+            env.seed(args.seed)
+            env.reset()
+            envs[idx] = env
+            logging.info(f"  Created env {idx}: {bddl_file}")
+            init_file = os.path.join(args.init_dir, bddl_file.replace(".bddl", ".pruned_init"))
+            if os.path.exists(init_file):
+                init_states[idx] = torch.load(init_file)
+            else:
+                init_states[idx] = None
 
     logging.info(f"Total envs created: {len(envs)}")
 
@@ -505,13 +523,12 @@ def main():
         instruction = task_info["instruction"]
         eval_id = task_info["eval_id"]
 
-        # Select env and init state
         env = envs[eval_id]
-        init_state = init_states[eval_id][0]  # Use first init state
-
-        # Reset env
         raw_obs = env.reset()
-        raw_obs = env.set_init_state(init_state)
+
+        init_data = init_states.get(eval_id)
+        if init_data is not None:
+            raw_obs = env.set_init_state(init_data[0])
 
         # Wait for stabilization
         for _ in range(args.num_steps_wait):

@@ -293,6 +293,8 @@ def main():
     parser.add_argument("--output_dir", type=str, default="./logs_para/x-vla/")
     parser.add_argument("--max_steps", type=int, default=300)
     parser.add_argument("--num_steps_wait", type=int, default=10)
+    parser.add_argument("--mode", type=str, default="auto", choices=["auto", "para", "original"],
+                        help="para: libero_para paraphrases, original: standard LIBERO suites, auto: detect from bddl filenames")
     parser.add_argument("--max_tasks", type=int, default=-1)
     args = parser.parse_args()
 
@@ -302,50 +304,85 @@ def main():
     np.random.seed(args.seed)
     torch.manual_seed(args.seed)
 
-    # ---- 1. Scan paraphrase bddl files ----
+    # ---- 1. Scan bddl files ----
     bddl_files = sorted([f for f in os.listdir(args.bddl_dir) if f.endswith(".bddl")])
-    logging.info(f"Found {len(bddl_files)} paraphrase bddl files")
+    logging.info(f"Found {len(bddl_files)} bddl files")
 
     if args.max_tasks > 0:
         bddl_files = bddl_files[:args.max_tasks]
         logging.info(f"Limited to {len(bddl_files)} tasks (debug mode)")
 
-    tasks = []
-    for bddl_file in bddl_files:
-        bddl_path = os.path.join(args.bddl_dir, bddl_file)
-        instruction = parse_bddl_instruction(bddl_path)
-        eval_id = extract_eval_id(bddl_file)
-        tasks.append({"bddl_file": bddl_file, "instruction": instruction, "eval_id": eval_id})
+    # Auto-detect mode
+    mode = args.mode
+    if mode == "auto":
+        mode = "para" if any("_eval" in f for f in bddl_files) else "original"
+    logging.info(f"Mode: {mode}")
 
-    eval_ids_needed = sorted(set(t["eval_id"] for t in tasks))
-    logging.info(f"Eval IDs needed: {eval_ids_needed}")
-
-    # ---- 2. Load init states ----
-    init_states = {}
-    for eval_id in eval_ids_needed:
-        init_path = os.path.join(args.init_dir, f"eval{eval_id}.pruned_init")
-        init_states[eval_id] = torch.load(init_path, weights_only=False)
-        logging.info(f"  Loaded init_states for eval{eval_id}: {len(init_states[eval_id])} states")
-
-    # ---- 3. Create envs (10 envs from libero_goal bddl) ----
     from libero.libero.envs import OffScreenRenderEnv
     from lerobot.envs.libero import get_libero_dummy_action
 
-    goal_bddl_files = sorted([f for f in os.listdir(args.goal_bddl_dir) if f.endswith(".bddl")])
-    logging.info(f"Found {len(goal_bddl_files)} goal bddl files")
+    if mode == "para":
+        # Para mode: parse eval_id, use goal envs, swap instructions
+        tasks = []
+        for bddl_file in bddl_files:
+            bddl_path = os.path.join(args.bddl_dir, bddl_file)
+            instruction = parse_bddl_instruction(bddl_path)
+            eval_id = extract_eval_id(bddl_file)
+            tasks.append({"bddl_file": bddl_file, "instruction": instruction, "eval_id": eval_id})
 
-    envs = {}
-    for idx, goal_bddl in enumerate(goal_bddl_files):
-        goal_bddl_path = os.path.join(args.goal_bddl_dir, goal_bddl)
-        env = OffScreenRenderEnv(
-            bddl_file_name=goal_bddl_path,
-            camera_heights=LIBERO_ENV_RESOLUTION,
-            camera_widths=LIBERO_ENV_RESOLUTION,
-        )
-        env.seed(args.seed)
-        env.reset()
-        envs[idx] = env
-        logging.info(f"  Created env {idx}: {goal_bddl}")
+        eval_ids_needed = sorted(set(t["eval_id"] for t in tasks))
+        logging.info(f"Eval IDs needed: {eval_ids_needed}")
+
+        # Load init states
+        init_states = {}
+        for eval_id in eval_ids_needed:
+            init_path = os.path.join(args.init_dir, f"eval{eval_id}.pruned_init")
+            init_states[eval_id] = torch.load(init_path, weights_only=False)
+            logging.info(f"  Loaded init_states for eval{eval_id}: {len(init_states[eval_id])} states")
+
+        # Create envs from goal bddl
+        goal_bddl_files = sorted([f for f in os.listdir(args.goal_bddl_dir) if f.endswith(".bddl")])
+        envs = {}
+        for idx, goal_bddl in enumerate(goal_bddl_files):
+            goal_bddl_path = os.path.join(args.goal_bddl_dir, goal_bddl)
+            env = OffScreenRenderEnv(
+                bddl_file_name=goal_bddl_path,
+                camera_heights=LIBERO_ENV_RESOLUTION,
+                camera_widths=LIBERO_ENV_RESOLUTION,
+            )
+            env.seed(args.seed)
+            env.reset()
+            envs[idx] = env
+            logging.info(f"  Created env {idx}: {goal_bddl}")
+
+    else:
+        # Original mode: each bddl is its own task/env
+        from libero.libero import get_libero_path
+        tasks = []
+        envs = {}
+        init_states = {}
+
+        for idx, bddl_file in enumerate(bddl_files):
+            bddl_path = os.path.join(args.bddl_dir, bddl_file)
+            instruction = parse_bddl_instruction(bddl_path)
+            tasks.append({"bddl_file": bddl_file, "instruction": instruction, "eval_id": idx})
+
+            env = OffScreenRenderEnv(
+                bddl_file_name=bddl_path,
+                camera_heights=LIBERO_ENV_RESOLUTION,
+                camera_widths=LIBERO_ENV_RESOLUTION,
+            )
+            env.seed(args.seed)
+            env.reset()
+            envs[idx] = env
+            logging.info(f"  Created env {idx}: {bddl_file}")
+
+            # Load init state from init_dir
+            init_file = os.path.join(args.init_dir, bddl_file.replace(".bddl", ".pruned_init"))
+            if os.path.exists(init_file):
+                init_states[idx] = torch.load(init_file, weights_only=False)
+            else:
+                init_states[idx] = None
 
     logging.info(f"Total envs created: {len(envs)}")
 
@@ -388,10 +425,11 @@ def main():
         eval_id = task_info["eval_id"]
 
         env = envs[eval_id]
-        init_state = init_states[eval_id][0]
-
         raw_obs = env.reset()
-        raw_obs = env.set_init_state(init_state)
+
+        init_data = init_states.get(eval_id)
+        if init_data is not None:
+            raw_obs = env.set_init_state(init_data[0])
 
         for _ in range(args.num_steps_wait):
             raw_obs, _, _, _ = env.step(dummy_action)
