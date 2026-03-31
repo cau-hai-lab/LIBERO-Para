@@ -62,4 +62,4 @@ CUDA_VISIBLE_DEVICES=0 python eval_scripts/examples/eval_openvla_oft.py \
 - Same codebase for goal and mixed — only checkpoint string differs
 - Action chunking: 8 open-loop steps
 - Camera resolution: 256x256
-- Paper: [arXiv:2410.01586](https://arxiv.org/abs/2410.01586)
+- Paper: [arXiv:2502.19645](https://arxiv.org/abs/2502.19645)
