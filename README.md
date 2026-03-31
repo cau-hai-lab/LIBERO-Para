@@ -3,9 +3,9 @@
 <h1>LIBERO-Para</h1>
 <p><b>A Diagnostic Benchmark and Metrics for Paraphrase Robustness in VLA Models</b></p>
 
-Chanyoung Kim<sup>1&#42;</sup> &nbsp;
-Minwoo Kim<sup>1&#42;</sup> &nbsp;
-Minseok Kang<sup>1</sup> &nbsp;
+<a href="https://cykim05.github.io">Chanyoung Kim</a><sup>1&#42;</sup> &nbsp;
+<a href="https://github.com/kmw5531">Minwoo Kim</a><sup>1&#42;</sup> &nbsp;
+<a href="https://github.com/min-soku">Minseok Kang</a><sup>1</sup> &nbsp;
 Hyunwoo Kim<sup>2</sup> &nbsp;
 Dahuin Jung<sup>2&dagger;</sup>
 
