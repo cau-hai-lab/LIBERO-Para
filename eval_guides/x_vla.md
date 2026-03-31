@@ -48,6 +48,19 @@ python eval_scripts/examples/eval_x_vla.py \
     --output_dir ./logs_para/x-vla/seed7/
 ```
 
+## Evaluating on Original LIBERO Suites
+
+The same script supports standard LIBERO suites (spatial, object, goal, etc.) via `--bddl_dir` and `--init_dir`. Mode is auto-detected from filenames.
+
+```bash
+python eval_scripts/examples/eval_x_vla.py \
+    --policy_path lerobot/xvla-libero \
+    --gpu 0 --seed 7 \
+    --bddl_dir libero/libero/bddl_files/libero_spatial \
+    --init_dir libero/libero/init_files/libero_spatial \
+    --output_dir ./logs_para/x-vla-spatial/seed7/
+```
+
 ## Notes
 
 - No server needed — model loads directly in the eval script

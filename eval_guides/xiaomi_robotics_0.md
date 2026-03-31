@@ -58,5 +58,15 @@ export MUJOCO_GL=egl
 python eval_scripts/examples/eval_xiaomi_robotics_0.py --port 10086 --seed 7 --output_dir ./logs_para/xiaomi/seed7/
 ```
 
-## TODO
-- [ ] Notes
+## Evaluating on Original LIBERO Suites
+
+The same script supports standard LIBERO suites via `--bddl_dir` and `--init_dir`. Mode is auto-detected.
+
+```bash
+python eval_scripts/examples/eval_xiaomi_robotics_0.py \
+    --port 10086 --seed 7 \
+    --bddl_dir libero/libero/bddl_files/libero_spatial \
+    --init_dir libero/libero/init_files/libero_spatial \
+    --goal_bddl_dir libero/libero/bddl_files/libero_spatial \
+    --output_dir ./logs_para/xiaomi-spatial/seed7/
+```

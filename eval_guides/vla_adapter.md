@@ -62,6 +62,20 @@ CUDA_VISIBLE_DEVICES=0 python eval_scripts/examples/eval_vla_adapter.py \
     --output_dir ./logs_para/vla-adapter/seed7/
 ```
 
+## Evaluating on Original LIBERO Suites
+
+The same script supports standard LIBERO suites via `--bddl_dir` and `--init_dir`. Mode is auto-detected.
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python eval_scripts/examples/eval_vla_adapter.py \
+    --pretrained_checkpoint eval_scripts/vla-adapter/outputs/LIBERO-Goal-Pro \
+    --gpu 0 --seed 7 \
+    --bddl_dir libero/libero/bddl_files/libero_spatial \
+    --init_dir libero/libero/init_files/libero_spatial \
+    --goal_bddl_dir libero/libero/bddl_files/libero_spatial \
+    --output_dir ./logs_para/vla-adapter-spatial/seed7/
+```
+
 ## Notes
 
 - No server needed — model loads directly in the eval script

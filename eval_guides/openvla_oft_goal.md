@@ -42,6 +42,20 @@ CUDA_VISIBLE_DEVICES=0 python eval_scripts/examples/eval_openvla_oft.py \
     --output_dir ./logs_para/openvla-oft-goal/seed7/
 ```
 
+## Evaluating on Original LIBERO Suites
+
+The same script supports standard LIBERO suites via `--bddl_dir` and `--init_dir`. Mode is auto-detected.
+
+```bash
+CUDA_VISIBLE_DEVICES=0 python eval_scripts/examples/eval_openvla_oft.py \
+    --pretrained_checkpoint moojink/openvla-7b-oft-finetuned-libero-goal \
+    --gpu 0 --seed 7 \
+    --bddl_dir libero/libero/bddl_files/libero_spatial \
+    --init_dir libero/libero/init_files/libero_spatial \
+    --goal_bddl_dir libero/libero/bddl_files/libero_spatial \
+    --output_dir ./logs_para/openvla-oft-spatial/seed7/
+```
+
 ## Notes
 
 - Checkpoint is auto-downloaded from HuggingFace
