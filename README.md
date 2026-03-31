@@ -13,7 +13,10 @@ Dahuin Jung<sup>2&dagger;</sup>
 <br>
 <sub>&#42; Equal contribution &nbsp;&nbsp; &dagger; Corresponding author</sub>
 
-<p><a href="https://arxiv.org/pdf/2603.28301">[Paper]</a></p>
+<p>
+<a href="https://arxiv.org/pdf/2603.28301">[Paper]</a> &nbsp;
+<a href="https://cau-hai-lab.github.io/LIBERO-Para/">[Project Page]</a>
+</p>
 
 <img src="images/LIBERO-Para.png" width="900">
 
