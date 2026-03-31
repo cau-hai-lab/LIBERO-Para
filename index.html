@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="LIBERO-Para: A Diagnostic Benchmark and Metrics for Paraphrase Robustness in VLA Models">
+  <meta name="keywords" content="LIBERO-Para, VLA, Paraphrase Robustness, PRIDE, Robotic Manipulation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LIBERO-Para: A Diagnostic Benchmark and Metrics for Paraphrase Robustness in VLA Models</title>
+
+  <!-- Google Analytics (replace G-XXXXXXXXXX with your measurement ID) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🤖</text></svg>">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+<!-- ==================== Hero ==================== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">LIBERO-Para: A Diagnostic Benchmark and Metrics for Paraphrase Robustness in VLA Models</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://cykim05.github.io">Chanyoung Kim</a><sup>1*</sup>,</span>
+            <span class="author-block">
+              <a href="https://github.com/kmw5531">Minwoo Kim</a><sup>1*</sup>,</span>
+            <span class="author-block">
+              <a href="https://github.com/min-soku">Minseok Kang</a><sup>1</sup>,</span>
+            <span class="author-block">
+              Hyunwoo Kim<sup>2</sup>,</span>
+            <span class="author-block">
+              Dahuin Jung<sup>2&dagger;</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Soongsil University,</span>
+            <span class="author-block"><sup>2</sup>Chung-Ang University</span>
+          </div>
+          <div class="is-size-6 publication-authors">
+            <span class="author-block">* Equal contribution &nbsp;&nbsp; &dagger; Corresponding author</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2603.28301"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2603.28301"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/cau-hai-lab/LIBERO-Para"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code (Dataset)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">&#129303;</span>
+                  <span>HuggingFace (Coming Soon)</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== Teaser (Fig1) ==================== -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body has-text-centered">
+      <img src="./static/images/Fig1.png"
+           alt="Paraphrase robustness gap in VLA models"
+           style="max-width: 520px; width: 100%;">
+      <h2 class="subtitle has-text-centered" style="margin-top: 1rem;">
+        VLA models overfit to seen instruction phrasings during fine-tuning and fail to generalize to paraphrased variants at deployment.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== Abstract ==================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Vision&ndash;Language&ndash;Action (VLA) models achieve strong performance in robotic manipulation by leveraging pre-trained vision&ndash;language backbones. However, in downstream robotic settings, they are typically fine-tuned with limited data, leading to overfitting to specific instruction formulations and leaving robustness to paraphrased instructions underexplored. To study this gap, we introduce <b>LIBERO-Para</b>, a controlled benchmark that independently varies action expressions and object references for fine-grained analysis of linguistic generalization. Across seven VLA configurations (0.6B&ndash;7.5B), we observe consistent performance degradation of 22&ndash;52&thinsp;pp under paraphrasing. This degradation is primarily driven by object-level lexical variation: even simple synonym substitutions cause large drops, indicating reliance on surface-level matching rather than semantic grounding. Moreover, 80&ndash;96% of failures arise from planning-level trajectory divergence rather than execution errors, showing that paraphrasing disrupts task identification. Binary success rate treats all paraphrases equally, obscuring whether models perform consistently across difficulty levels or rely on easier cases. To address this, we propose <b>PRIDE</b>, a metric that quantifies paraphrase difficulty using semantic and syntactic factors.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== Overview (Fig2) ==================== -->
+<section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">LIBERO-Para Overview</h2>
+        <div class="content has-text-justified" style="margin-bottom: 1.5rem;">
+          <p>
+            Compared to LIBERO, LIBERO-Para evaluates paraphrase robustness under data-scarce fine-tuning via a controlled <b>two-axis design</b> (action vs. object), enabling interpretable analysis. The benchmark includes 4,000+ paraphrased instructions across 10 evaluation scenarios.
+          </p>
+        </div>
+        <img src="./static/images/Fig2.png"
+             alt="LIBERO-Para overview"
+             width="100%">
+        <p style="margin-top: 0.75rem; font-size: 0.9rem; color: #666;">
+          Overview of LIBERO-Para. Paraphrases are decomposed along action and object axes, enabling fine-grained analysis of which linguistic variations most severely impact VLA performance.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== Paraphrase Taxonomy (Fig3) ==================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Paraphrase Taxonomy</h2>
+        <div class="content has-text-justified">
+          <p>
+            Robotic manipulation instructions are structured around <i>what to act on</i> and <i>how to act</i>. LIBERO-Para decomposes paraphrases along these two axes: <b>object-referring expressions</b> (e.g., synonym substitution, addition) and <b>action-referring expressions</b> (lexical, structural, and pragmatic variations). Composing both yields <b>compositional paraphrases</b>, totaling 43 fine-grained variation types.
+          </p>
+        </div>
+        <img src="./static/images/Fig3.png"
+             alt="Paraphrase taxonomy examples"
+             style="max-width: 460px; width: 100%;">
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+          Examples of axis-specific paraphrases. Object variations modify target references; action variations cover lexical, structural, and pragmatic realizations.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== PRIDE Metric (Fig4) ==================== -->
+<section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">PRIDE Metric</h2>
+        <div class="content has-text-justified">
+          <p>
+            Binary success rate treats all paraphrases equally, obscuring whether models succeed consistently or rely on easier cases. <b>PRIDE</b> (Paraphrase Robustness Index in Robotic Instructional DEviation) addresses this by computing a <b>Paraphrase Distance (PD)</b> from keyword similarity (S<sub>K</sub>) and structural similarity (S<sub>T</sub>), then weighting success by difficulty. Unlike plain SR, PRIDE gives more credit for succeeding on harder, more deviated paraphrases.
+          </p>
+        </div>
+        <img src="./static/images/Fig4.png"
+             alt="PRIDE metric: SK and ST computation"
+             style="max-width: 520px; width: 100%;">
+        <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+          S<sub>K</sub> (top) measures keyword-level semantic similarity between task-critical content words. S<sub>T</sub> (bottom) uses dependency-tree edit distance to capture structural variation.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== Experiment: Main Results ==================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column">
+        <h2 class="title is-3">Experiment</h2>
+      </div>
+    </div>
+
+    <!-- SR Drop Table -->
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h3 class="title is-4 has-text-centered">Success Rate: LIBERO-Goal vs. LIBERO-Para</h3>
+        <div class="table-container">
+          <table class="table is-striped is-hoverable is-fullwidth" style="font-size: 0.95rem;">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th style="text-align:center;">LIBERO-Goal SR</th>
+                <th style="text-align:center;">LIBERO-Para SR</th>
+                <th style="text-align:center;">Drop</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Xiaomi-Robotics-0</td><td style="text-align:center;">98.8</td><td style="text-align:center;"><b>76.0</b></td><td style="text-align:center; color:#e74c3c;">-22.8</td></tr>
+              <tr><td>&pi;<sub>0.5</sub></td><td style="text-align:center;">97.6</td><td style="text-align:center;">71.4</td><td style="text-align:center; color:#e74c3c;">-26.2</td></tr>
+              <tr><td>OpenVLA-OFT<sub>mixed</sub></td><td style="text-align:center;">96.1</td><td style="text-align:center;">63.7</td><td style="text-align:center; color:#e74c3c;">-32.4</td></tr>
+              <tr><td>OpenVLA-OFT<sub>goal</sub></td><td style="text-align:center;">97.9</td><td style="text-align:center;">64.7</td><td style="text-align:center; color:#e74c3c;">-33.2</td></tr>
+              <tr><td>X-VLA</td><td style="text-align:center;">97.8</td><td style="text-align:center;">62.1</td><td style="text-align:center; color:#e74c3c;">-35.7</td></tr>
+              <tr><td>&pi;<sub>0.5</sub> (expert-only)</td><td style="text-align:center;">78.6</td><td style="text-align:center;">39.1</td><td style="text-align:center; color:#e74c3c;">-39.5</td></tr>
+              <tr><td>VLA-Adapter</td><td style="text-align:center;">98.2</td><td style="text-align:center;">46.3</td><td style="text-align:center; color:#e74c3c;">-51.9</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRIDE Table -->
+    <div class="columns is-centered" style="margin-top: 1.5rem;">
+      <div class="column is-four-fifths">
+        <h3 class="title is-4 has-text-centered">PRIDE Reveals Hidden Severity</h3>
+        <div class="table-container">
+          <table class="table is-striped is-hoverable is-fullwidth" style="font-size: 0.95rem;">
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th style="text-align:center;">SR</th>
+                <th style="text-align:center;">PRIDE</th>
+                <th style="text-align:center;">Overestimation (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>VLA-Adapter</td><td style="text-align:center;">46.3</td><td style="text-align:center;">36.1</td><td style="text-align:center;"><b>22.0</b></td></tr>
+              <tr><td>&pi;<sub>0.5</sub> (expert-only)</td><td style="text-align:center;">39.1</td><td style="text-align:center;">32.0</td><td style="text-align:center;"><b>18.2</b></td></tr>
+              <tr><td>X-VLA</td><td style="text-align:center;">62.1</td><td style="text-align:center;">52.7</td><td style="text-align:center;"><b>15.1</b></td></tr>
+              <tr><td>OpenVLA-OFT<sub>mixed</sub></td><td style="text-align:center;">63.7</td><td style="text-align:center;">56.3</td><td style="text-align:center;"><b>11.6</b></td></tr>
+              <tr><td>OpenVLA-OFT<sub>goal</sub></td><td style="text-align:center;">64.7</td><td style="text-align:center;">58.8</td><td style="text-align:center;"><b>9.1</b></td></tr>
+              <tr><td>Xiaomi-Robotics-0</td><td style="text-align:center;">76.0</td><td style="text-align:center;">69.2</td><td style="text-align:center;"><b>8.9</b></td></tr>
+              <tr><td>&pi;<sub>0.5</sub></td><td style="text-align:center;">71.4</td><td style="text-align:center;">65.4</td><td style="text-align:center;"><b>8.4</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 0.5rem;">
+          Overestimation = (SR &minus; PRIDE) / SR. Higher values indicate success concentrated on easier paraphrases.
+        </p>
+      </div>
+    </div>
+
+    <!-- Model-average SR Heatmap -->
+    <div class="columns is-centered has-text-centered" style="margin-top: 2rem;">
+      <div class="column is-four-fifths">
+        <img src="./static/images/Fig6.png" alt="Model-average SR heatmap" width="100%" style="display:block;">
+        <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #666;">
+          Model-average success rate per Object &times; Action cell. Object-paraphrased rows drop sharply, reaching 30.4% at SP-habitual &times; Hint.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ==================== Finding 1 ==================== -->
+<section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Finding 1: Paraphrase Fragility Persists</h2>
+        <div class="content has-text-justified">
+          <p>
+            Across seven configurations spanning four architecture families, all models show substantial SR drops under paraphrasing (<b>22.8&ndash;51.9&thinsp;pp</b>). The 7.5B OpenVLA-OFT shows PRIDE scores comparable to the 0.9B X-VLA. Expanding task-level data diversity by 4&times; (OFT<sub>mixed</sub> vs. OFT<sub>goal</sub>) yields similar drops (32.4 vs. 33.2&thinsp;pp), suggesting that <b>increasing task diversity does not improve robustness to linguistic variation</b>. Freezing the VLM and fine-tuning only the Action Expert also does not help. Paraphrase fragility cannot be explained by architecture, data scope, or fine-tuning strategy alone.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== Finding 2 ==================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Finding 2: Object Grounding Is the Primary Bottleneck</h2>
+        <div class="content has-text-justified">
+          <p>
+            When the object is paraphrased&mdash;even through common synonyms such as replacing <i>stove</i> with <i>range</i>&mdash;performance drops by <b>19.8&ndash;51.0&thinsp;pp</b> across models. This gap appears consistently across architectures, suggesting that current VLAs rely on <b>surface-level keyword matching</b> rather than semantic understanding. The object space is lexically open-ended, concentrating combinatorial complexity on object references.
+          </p>
+        </div>
+        <div class="has-text-centered">
+          <img src="./static/images/Fig7.png"
+               alt="Object-preserved vs object-paraphrased SR"
+               style="max-width: 600px; width: 100%;">
+          <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+            SR comparison: object-preserved (None, Addition) vs. object-paraphrased (SP-contextual, SP-habitual). &Delta; annotated per pair.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== Finding 3 ==================== -->
+<section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Finding 3: Failures Are Planning-Level, Not Execution-Level</h2>
+        <div class="content has-text-justified">
+          <p>
+            We classify failures based on trajectory similarity to successful executions. <b>Far-GT</b> (planning-level): trajectories diverge from the ground-truth early, indicating the model misidentified the task. <b>Near-GT</b> (execution-level): trajectories track the GT but fail due to minor control errors. Across models, <b>79.5&ndash;95.5%</b> of failures are Far-GT, showing that paraphrasing disrupts task identification rather than motor control.
+          </p>
+        </div>
+
+        <!-- Trajectory visualization -->
+        <div class="has-text-centered">
+          <img src="./static/images/Fig8.png"
+               alt="Near-GT vs Far-GT trajectory visualization"
+               style="max-width: 560px; width: 100%;">
+          <p style="margin-top: 0.5rem; font-size: 0.9rem; color: #666;">
+            Green: success; black: mean GT; orange: Near-GT failure; red: Far-GT failure (diverges early).
+          </p>
+        </div>
+
+        <!-- Failure classification table -->
+        <div class="table-container" style="margin-top: 1.5rem;">
+          <table class="table is-striped is-hoverable is-fullwidth" style="font-size: 0.95rem;">
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th style="text-align:center;">SR</th>
+                <th style="text-align:center;">Near-GT</th>
+                <th style="text-align:center;">Far-GT</th>
+                <th style="text-align:center;">Far-GT (%)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>OpenVLA-OFT<sub>goal</sub></td><td style="text-align:center;">64.7</td><td style="text-align:center;">1.6</td><td style="text-align:center;">33.7</td><td style="text-align:center;"><b>95.5</b></td></tr>
+              <tr><td>Xiaomi-Robotics-0</td><td style="text-align:center;">76.0</td><td style="text-align:center;">1.8</td><td style="text-align:center;">22.2</td><td style="text-align:center;"><b>92.5</b></td></tr>
+              <tr><td>VLA-Adapter</td><td style="text-align:center;">46.3</td><td style="text-align:center;">4.2</td><td style="text-align:center;">49.5</td><td style="text-align:center;"><b>92.2</b></td></tr>
+              <tr><td>&pi;<sub>0.5</sub></td><td style="text-align:center;">71.4</td><td style="text-align:center;">2.4</td><td style="text-align:center;">26.2</td><td style="text-align:center;"><b>91.6</b></td></tr>
+              <tr><td>OpenVLA-OFT<sub>mixed</sub></td><td style="text-align:center;">63.7</td><td style="text-align:center;">3.3</td><td style="text-align:center;">33.0</td><td style="text-align:center;"><b>90.9</b></td></tr>
+              <tr><td>X-VLA</td><td style="text-align:center;">62.1</td><td style="text-align:center;">5.2</td><td style="text-align:center;">32.7</td><td style="text-align:center;"><b>86.3</b></td></tr>
+              <tr><td>&pi;<sub>0.5</sub> (expert-only)</td><td style="text-align:center;">39.1</td><td style="text-align:center;">12.5</td><td style="text-align:center;">48.4</td><td style="text-align:center;"><b>79.5</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== Implications ==================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Implications for Future VLA Development</h2>
+        <div class="content has-text-justified">
+          <p>
+            Our findings collectively point to a fundamental limitation: current VLA models rely on <b>surface-level keyword matching</b> rather than genuine semantic understanding of instructions. This suggests several directions for advancing the next generation of VLA systems:
+          </p>
+          <ul>
+            <li><b>From keyword matching to semantic object grounding.</b> Object-level variation is the dominant failure source (Finding 2), yet current training data typically refers to each object by a single canonical name. Future work should explore richer object representations&mdash;grounding objects through visual attributes, spatial relations, or functional descriptions&mdash;rather than relying on fixed lexical labels.</li>
+            <li><b>Instruction-to-task mapping over motor control refinement.</b> 80&ndash;96% of failures are planning-level, not execution-level (Finding 3). This means models generate entirely wrong trajectories, not slightly imprecise ones. Improving VLA robustness should prioritize <b>how instructions are mapped to task plans</b>, rather than refining low-level action precision.</li>
+            <li><b>Linguistic diversity in training.</b> Scaling model size or expanding task-level data diversity does not resolve paraphrase fragility (Finding 1). This suggests that exposure to <b>linguistically diverse instructions during training</b>&mdash;including synonyms, structural rephrasing, and indirect expressions&mdash;may be essential for robust deployment.</li>
+            <li><b>Difficulty-aware evaluation.</b> Standard binary success rate masks hidden severity by treating easy and hard paraphrases equally. Metrics like <b>PRIDE</b> that account for paraphrase difficulty provide a more faithful assessment of real-world robustness, and should be adopted alongside SR in future VLA benchmarks.</li>
+          </ul>
+          <p>
+            Ultimately, for VLA models to operate reliably in real-world settings where users express the same intent in diverse ways, the field must move beyond pattern memorization toward <b>robust language understanding grounded in semantic and visual context</b>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==================== BibTeX ==================== -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@misc{kim2026liberoparadiagnosticbenchmarkmetrics,
+      title={LIBERO-Para: A Diagnostic Benchmark and Metrics for Paraphrase Robustness in VLA Models},
+      author={Chanyoung Kim and Minwoo Kim and Minseok Kang and Hyunwoo Kim and Dahuin Jung},
+      year={2026},
+      eprint={2603.28301},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2603.28301},
+}</code></pre>
+  </div>
+</section>
+
+
+<!-- ==================== Footer ==================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://arxiv.org/pdf/2603.28301">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/cau-hai-lab/LIBERO-Para">
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is based on the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> project page template, licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
