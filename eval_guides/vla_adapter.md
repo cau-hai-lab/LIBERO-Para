@@ -83,4 +83,4 @@ CUDA_VISIBLE_DEVICES=0 python eval_scripts/examples/eval_vla_adapter.py \
 - Uses Pro version by default (`use_pro_version=True`)
 - Action chunking: 8 open-loop steps
 - Camera resolution: 256x256
-- Paper: [arXiv](https://arxiv.org/abs/2501.00000)
+- Paper: [arXiv:2509.09372](https://arxiv.org/abs/2509.09372)

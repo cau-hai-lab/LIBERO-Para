@@ -70,3 +70,9 @@ python eval_scripts/examples/eval_xiaomi_robotics_0.py \
     --goal_bddl_dir libero/libero/bddl_files/libero_spatial \
     --output_dir ./logs_para/xiaomi-spatial/seed7/
 ```
+
+## Notes
+
+- Requires two terminals: model server (mibot env) + eval client (libero env)
+- Checkpoint: [XiaomiRobotics/Xiaomi-Robotics-0-LIBERO](https://huggingface.co/XiaomiRobotics/Xiaomi-Robotics-0-LIBERO) (auto-downloaded)
+- Paper: [arXiv:2602.12684](https://arxiv.org/abs/2602.12684)
