@@ -15,7 +15,8 @@ Dahuin Jung<sup>2&dagger;</sup>
 
 <p>
 <a href="https://arxiv.org/pdf/2603.28301">[Paper]</a> &nbsp;
-<a href="https://cau-hai-lab.github.io/LIBERO-Para/">[Project Page]</a>
+<a href="https://cau-hai-lab.github.io/LIBERO-Para/">[Project Page]</a> &nbsp;
+<a href="https://huggingface.co/datasets/HAI-Lab/LIBERO-Para"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Dataset-yellow" alt="HuggingFace Dataset"></a>
 </p>
 
 <img src="images/LIBERO-Para.png" width="900">
