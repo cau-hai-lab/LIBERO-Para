@@ -14,10 +14,11 @@ Dahuin Jung<sup>2&dagger;</sup>
 <sub>&#42; Equal contribution &nbsp;&nbsp; &dagger; Corresponding author</sub>
 
 <p>
-<a href="https://arxiv.org/pdf/2603.28301"><img src="https://img.shields.io/badge/arXiv-Paper-red" alt="Paper"></a> &nbsp;
-<a href="https://cau-hai-lab.github.io/LIBERO-Para/"><img src="https://img.shields.io/badge/GitHub-Project%20Page-blue" alt="Project Page"></a> &nbsp;
-<a href="https://huggingface.co/datasets/HAI-Lab/LIBERO-Para"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Dataset-yellow" alt="HuggingFace Dataset"></a> &nbsp;
-<a href="https://huggingface.co/papers?date=2026-04-07"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Daily%20Papers-%233-FFD21E" alt="Hugging Face Daily Papers"></a>
+<a href="https://arxiv.org/pdf/2603.28301"><img src="https://img.shields.io/badge/arXiv-Paper-B31B1B?style=for-the-badge&logo=arxiv&logoColor=white" alt="Paper"></a>
+<a href="https://cau-hai-lab.github.io/LIBERO-Para/"><img src="https://img.shields.io/badge/Project-Page-2B6CB0?style=for-the-badge&logo=github&logoColor=white" alt="Project Page"></a>
+<a href="https://huggingface.co/datasets/HAI-Lab/LIBERO-Para"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Dataset-FFD21E?style=for-the-badge" alt="HuggingFace Dataset"></a>
+<a href="https://huggingface.co/papers?date=2026-04-07"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Daily%20Papers-%233-FF9D00?style=for-the-badge" alt="Daily Papers"></a>
+<a href="https://x.com/HuggingPapers/status/2041553220028232082"><img src="https://img.shields.io/badge/Featured%20on-𝕏-000000?style=for-the-badge&logo=x&logoColor=white" alt="Featured on X"></a>
 </p>
 
 <p>🔥 Our paper is ranked <b>#3</b> on Hugging Face Daily Papers! (Apr 7, 2026)</p>
