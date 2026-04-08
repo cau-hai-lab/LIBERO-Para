@@ -20,7 +20,7 @@ Dahuin Jung<sup>2&dagger;</sup>
 <a href="https://huggingface.co/papers?date=2026-04-07"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Daily%20Papers-%233-FFD21E" alt="Hugging Face Daily Papers"></a>
 </p>
 
-<p>🔥 Our paper is ranked <b>#3</b> on <a href="https://huggingface.co/papers?date=2026-04-07">Hugging Face Daily Papers</a>! (Apr 7, 2026)</p>
+<p>🔥 Our paper is ranked <b>#3</b> on Hugging Face Daily Papers! (Apr 7, 2026)</p>
 
 <img src="images/LIBERO-Para.png" width="900">
 
