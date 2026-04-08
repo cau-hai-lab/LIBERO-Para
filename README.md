@@ -16,7 +16,8 @@ Dahuin Jung<sup>2&dagger;</sup>
 <p>
 <a href="https://arxiv.org/pdf/2603.28301"><img src="https://img.shields.io/badge/arXiv-Paper-red" alt="Paper"></a> &nbsp;
 <a href="https://cau-hai-lab.github.io/LIBERO-Para/"><img src="https://img.shields.io/badge/GitHub-Project%20Page-blue" alt="Project Page"></a> &nbsp;
-<a href="https://huggingface.co/datasets/HAI-Lab/LIBERO-Para"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Dataset-yellow" alt="HuggingFace Dataset"></a>
+<a href="https://huggingface.co/datasets/HAI-Lab/LIBERO-Para"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Dataset-yellow" alt="HuggingFace Dataset"></a> &nbsp;
+<a href="https://huggingface.co/papers?date=2026-04-07"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Daily%20Papers-%233-FFD21E" alt="Hugging Face Daily Papers"></a>
 </p>
 
 <img src="images/LIBERO-Para.png" width="900">
