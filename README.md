@@ -6,8 +6,8 @@
 <a href="https://cykim05.github.io">Chanyoung Kim</a><sup>1&#42;</sup> &nbsp;
 <a href="https://github.com/kmw5531">Minwoo Kim</a><sup>1&#42;</sup> &nbsp;
 <a href="https://github.com/min-soku">Minseok Kang</a><sup>1</sup> &nbsp;
-Hyunwoo Kim<sup>2</sup> &nbsp;
-Dahuin Jung<sup>2&dagger;</sup>
+<a href="https://scholar.google.com/citations?user=QvFp6lcAAAAJ&hl=en">Hyunwoo Kim</a><sup>2</sup> &nbsp;
+<a href="https://scholar.google.com/citations?user=wleS-UQAAAAJ&hl=en">Dahuin Jung</a><sup>2&dagger;</sup>
 
 <sub><sup>1</sup>Soongsil University &nbsp;&nbsp; <sup>2</sup>Chung-Ang University</sub>
 <br>
