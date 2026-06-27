@@ -8,7 +8,8 @@ Guides for evaluating each model on LIBERO-Para.
 |-------|-------|----------------|
 | OpenVLA-OFT (Goal) | [Guide](openvla_oft_goal.md) | [Script](../eval_scripts/examples/eval_openvla_oft_goal.py) |
 | OpenVLA-OFT (Mixed) | [Guide](openvla_oft_mixed.md) | [Script](../eval_scripts/examples/eval_openvla_oft_mixed.py) |
-| Pi0.5 | [Guide](pi05.md) | [Script](../eval_scripts/examples/eval_pi05.py) |
+| Pi 0.5 (Base) | [Guide](pi05.md) | [Script](../eval_scripts/examples/eval_pi05.py) |
+| Pi 0.5 (Expert-Only) | [Guide](pi05_expert_only.md) | [Script](../eval_scripts/examples/eval_pi05.py) |
 | X-VLA | [Guide](x_vla.md) | [Script](../eval_scripts/examples/eval_x_vla.py) |
 | VLA-Adapter | [Guide](vla_adapter.md) | [Script](../eval_scripts/examples/eval_vla_adapter.py) |
 | Xiaomi Robotics 0 | [Guide](xiaomi_robotics_0.md) | [Script](../eval_scripts/examples/eval_xiaomi_robotics_0.py) |

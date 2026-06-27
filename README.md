@@ -56,7 +56,8 @@ Each model is evaluated using a custom standalone script under [`eval_scripts/ex
 |:------|:------:|:-------------|:-------:|:------|:-------|:------:|
 | OpenVLA-OFT (Goal) | 7.5B | Parallel Decoding | 2025.03 | [Guide](eval_guides/openvla_oft_goal.md) | [`eval_openvla_oft.py`](eval_scripts/examples/eval_openvla_oft.py) | &#9989; |
 | OpenVLA-OFT (Mixed) | 7.5B | Parallel Decoding | 2025.03 | [Guide](eval_guides/openvla_oft_mixed.md) | [`eval_openvla_oft.py`](eval_scripts/examples/eval_openvla_oft.py) | &#9989; |
-| Pi0.5 | 3.3B | VLM + Action Expert | 2025.09 | [Guide](eval_guides/pi05.md) | — | &#9203; |
+| Pi 0.5 (Base) | 3.3B | VLM + Action Expert | 2025.09 | [Guide](eval_guides/pi05.md) | [`eval_pi05.py`](eval_scripts/examples/eval_pi05.py) | &#9203; |
+| Pi 0.5 (Expert-Only) | 3.3B | VLM + Action Expert | 2025.09 | [Guide](eval_guides/pi05_expert_only.md) | [`eval_pi05.py`](eval_scripts/examples/eval_pi05.py) | &#9203; |
 | X-VLA | 0.9B | Soft-prompted | 2026.01 | [Guide](eval_guides/x_vla.md) | [`eval_x_vla.py`](eval_scripts/examples/eval_x_vla.py) | &#9989; |
 | VLA-Adapter | 0.6B | Bridge-based | 2025.09 | [Guide](eval_guides/vla_adapter.md) | [`eval_vla_adapter.py`](eval_scripts/examples/eval_vla_adapter.py) | &#9989; |
 | Xiaomi-Robotics-0 | 4.7B | VLM + Action Expert | 2026.02 | [Guide](eval_guides/xiaomi_robotics_0.md) | [`eval_xiaomi_robotics_0.py`](eval_scripts/examples/eval_xiaomi_robotics_0.py) | &#9989; |
@@ -129,13 +130,8 @@ LIBERO-Para/
 
 ## TODO
 
-- [ ] Add obj preserved vs paraphrased visualization
-- [ ] Eval Guide & Script
-  - [x] OpenVLA-OFT (Goal / Mixed)
-  - [ ] Pi0.5 (Docker setup in progress)
-  - [x] X-VLA
-  - [x] VLA-Adapter
-  - [x] Xiaomi-Robotics-0
+- [ ] Release the **paraphrase generation pipeline** (LLM-based generator + verifier used to produce the 4 092 LIBERO-Para paraphrases)
+- [ ] Release **CALVIN-Para** — a paraphrase-robustness implementation + dataset for the CALVIN benchmark. Designed as a **cross-benchmark transferability test** of paraphrase-robustness metrics (PRIDE, S_K, S_T): mirrors LIBERO-Para's 43-cell taxonomy on a different simulator and task distribution, letting researchers verify that observations made on LIBERO generalize beyond a single benchmark
 
 ---
 

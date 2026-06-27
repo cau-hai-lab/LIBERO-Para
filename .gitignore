@@ -31,3 +31,14 @@ eval_scripts/pi05/
 eval_scripts/x-vla/
 eval_scripts/vla-adapter/
 eval_scripts/xiaomi-robotics-0/
+
+# Downloaded analysis data
+260301_analysis/
+
+# CALVIN cross-benchmark setup (env, model weights, dataset)
+calvin-para/
+
+# Paraphrase generation pipeline (LLM outputs, API-keyed scripts)
+paraphrase_generation/
+
+test_260507/
