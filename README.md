@@ -21,6 +21,7 @@
 <a href="https://x.com/HuggingPapers/status/2041553220028232082"><img src="https://img.shields.io/badge/Featured%20on-𝕏-000000?style=for-the-badge&logo=x&logoColor=white" alt="Featured on X"></a>
 </p>
 
+<p>🎉 Our paper is accepted to <b>EMNLP 2026 Main</b>!</p>
 <p>🔥 Our paper is ranked <b>#3</b> on Hugging Face Daily Papers! (Apr 7, 2026)</p>
 
 <img src="images/LIBERO-Para.png" width="900">
