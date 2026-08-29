@@ -24,6 +24,11 @@ in general.
 
 **1,935 paraphrased instructions** = 15 CALVIN tasks × 43 cells × 3 paraphrases each.
 
+**All three LIBERO-Para findings reproduce on CALVIN.** Paraphrase fragility persists
+regardless of model capability (Finding 1), object grounding remains the primary bottleneck
+(Finding 2), and failures stay planning-level rather than execution-level (Finding 3), even
+though the simulator, the robot, and the task family have all changed.
+
 All 15 tasks share one scene (CALVIN scene D). Every canonical name above is present in
 every episode: drawer, sliding door, sliding cabinet, button, LED light, light bulb, and the
 red, blue, and pink blocks. Renaming an object therefore forces real disambiguation against
