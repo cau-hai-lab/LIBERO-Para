@@ -1,0 +1,15 @@
+# Raw LLM outputs, intermediate CSVs, review dumps, run logs.
+# The published artifacts are paraphrases.json + paraphrase_summary.csv.
+llm_output/
+
+# Post-hoc fix-up and inspection tooling, not part of the pipeline
+manual_fill.py
+fix_paraphrases_c.py
+verify_only.py
+post_clean.py
+merge_and_review.py
+each_type_info_obj_only.csv
+inputs/calvin_base20_tasks.txt
+
+__pycache__/
+*.pyc

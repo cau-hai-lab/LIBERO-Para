@@ -1,0 +1,332 @@
+diff --git a/robot_flamingo/eval/eval_calvin.py b/robot_flamingo/eval/eval_calvin.py
+index ed83fab..3a0b934 100755
+--- a/robot_flamingo/eval/eval_calvin.py
++++ b/robot_flamingo/eval/eval_calvin.py
+@@ -7,8 +7,7 @@ import random
+ from robot_flamingo.eval.eval_utils import eval_one_epoch_calvin_ddp
+ from torch.distributed.elastic.multiprocessing.errors import record
+ 
+-# os.environ['PYOPENGL_PLATFORM'] = 'egl'
+-os.environ['PYOPENGL_PLATFORM'] = 'osmesa'
++os.environ.setdefault('PYOPENGL_PLATFORM', 'egl')  # was osmesa; EGL works on our env
+ import numpy as np
+ import torch
+ import wandb
+@@ -360,7 +359,10 @@ def main():
+     device_id = init_distributed_device(args)
+     print("device_id: ", device_id)
+     print("world_size: ", torch.distributed.get_world_size())
+-    random_seed(args.seed)
++    _override = os.environ.get("INFERENCE_SEED")
++    seed_for_run = int(_override) if _override else args.seed
++    print(f"[seed] inference seed = {seed_for_run} (override={_override is not None})")
++    random_seed(seed_for_run)
+ 
+     model, image_processor, tokenizer = create_model_and_transforms(
+         args.vision_encoder_path,
+@@ -441,18 +443,29 @@ def main():
+     eval_log_dir = None
+     if args.visualize:
+         eval_log_dir = 'evaluate/{}'.format(args.evaluate_from_checkpoint.split('.')[0])
+-    eval_one_epoch_calvin_ddp(
+-        args=args,
+-        model=ddp_model,
+-        image_processor=image_processor,
+-        tokenizer=tokenizer,
+-        dataset_path=args.calvin_dataset,
+-        future_act_len=args.future_act_len,
+-        eval_log_dir=eval_log_dir,
+-        debug=args.visualize,
+-        reset=args.reset,
+-        diverse_inst=args.diverse_inst
+-    )
++    if os.environ.get("EPISODES_JSON"):
++        from eval_utils import eval_one_epoch_calvin_episodes
++        eval_one_epoch_calvin_episodes(
++            args=args,
++            model=ddp_model,
++            image_processor=image_processor,
++            tokenizer=tokenizer,
++            dataset_path=args.calvin_dataset,
++            future_act_len=args.future_act_len,
++        )
++    else:
++        eval_one_epoch_calvin_ddp(
++            args=args,
++            model=ddp_model,
++            image_processor=image_processor,
++            tokenizer=tokenizer,
++            dataset_path=args.calvin_dataset,
++            future_act_len=args.future_act_len,
++            eval_log_dir=eval_log_dir,
++            debug=args.visualize,
++            reset=args.reset,
++            diverse_inst=args.diverse_inst
++        )
+ 
+ 
+ if __name__ == "__main__":
+diff --git a/robot_flamingo/eval/eval_utils.py b/robot_flamingo/eval/eval_utils.py
+index 3e9ea8d..10582a7 100755
+--- a/robot_flamingo/eval/eval_utils.py
++++ b/robot_flamingo/eval/eval_utils.py
+@@ -38,12 +38,12 @@ from calvin_env.envs.play_table_env import get_env
+ from robot_flamingo.data.data import preprocess_image, preprocess_text_calvin
+ from robot_flamingo.utils import world_to_tcp_frame, tcp_to_world_frame
+ import functools
+-os.environ['PYOPENGL_PLATFORM'] = 'osmesa'
++os.environ.setdefault('PYOPENGL_PLATFORM', 'egl')
+ import pyrender
+ logger = logging.getLogger(__name__)
+ 
+-EP_LEN = 360
+-NUM_SEQUENCES = 1000
++EP_LEN = int(os.environ.get("RF_EP_LEN", "360"))   # default CALVIN long-horizon; for single-task paraphrase use 200
++NUM_SEQUENCES = int(os.environ.get("RF_NUM_SEQUENCES", "5"))   # sanity default 5; full = 1000
+ # NUM_SEQUENCES = 400
+ 
+ def get_cast_dtype(precision: str):
+@@ -374,10 +374,10 @@ def evaluate_policy(model, env, epoch, calvin_conf_path, eval_log_dir=None, debu
+     task_cfg = OmegaConf.load(conf_dir / "callbacks/rollout/tasks/new_playtable_tasks.yaml")
+     task_oracle = hydra.utils.instantiate(task_cfg)
+     if diverse_inst:
+-        with open('/mnt/bn/robotics/lxh/robot-flamingo/enrich_lang_annotations.json', 'r') as f:
++        with open('enrich_lang_annotations.json', 'r') as f:
+             val_annotations = json.load(f)
+     else:
+-        val_annotations = OmegaConf.load(conf_dir / "annotations/new_playtable_validation.yaml")
++        val_annotations = OmegaConf.load(conf_dir / "annotations" / os.environ.get("CALVIN_VAL_YAML", "new_playtable_validation.yaml"))
+ 
+     eval_log_dir = get_log_dir(eval_log_dir)
+ 
+@@ -426,13 +426,13 @@ def evaluate_policy_ddp(model, env, epoch, calvin_conf_path, eval_log_dir=None,
+     
+     # val_annotations = OmegaConf.load(conf_dir / "annotations/new_playtable_validation.yaml")
+     if diverse_inst:
+-        with open('/mnt/bn/robotics/lxh/robot-flamingo/lang_annotation_cache.json', 'r') as f:
++        with open('lang_annotation_cache.json', 'r') as f:
+             val_annotations = json.load(f)
+     else:
+-        val_annotations = OmegaConf.load(conf_dir / "annotations/new_playtable_validation.yaml")
++        val_annotations = OmegaConf.load(conf_dir / "annotations" / os.environ.get("CALVIN_VAL_YAML", "new_playtable_validation.yaml"))
+ 
+     eval_log_dir = get_log_dir(eval_log_dir)
+-    with open('/mnt/bn/robotics/lxh/robot-flamingo/eval_sequences.json', 'r') as f:
++    with open('eval_sequences.json', 'r') as f:
+         eval_sequences = json.load(f)
+     device_num = int(torch.distributed.get_world_size())
+     device_id = torch.distributed.get_rank()
+@@ -667,7 +667,7 @@ def main():
+ 
+ def generate_zero_shot_instr():
+     random.seed(123)
+-    with open('/mnt/bn/robotics/lxh/robot-flamingo/enrich_lang_annotations.json', 'r') as f:
++    with open('enrich_lang_annotations.json', 'r') as f:
+             val_annotations = json.load(f)
+     eval_sequences = get_sequences(NUM_SEQUENCES)
+     
+@@ -677,12 +677,154 @@ def generate_zero_shot_instr():
+         for subtask_i, subtask in enumerate(eval_sequence):
+             res.append(random.choice(val_annotations[subtask]))
+         all_res.append(res)
+-    with open('/mnt/bn/robotics/lxh/robot-flamingo/lang_annotation_cache.json', 'w') as f:
++    with open('lang_annotation_cache.json', 'w') as f:
+         json.dump(all_res, f, indent=1)
+ 
+ 
+ def save_sequences():
+     random.seed(123)
+     eval_sequences = get_sequences(NUM_SEQUENCES)
+-    with open('/mnt/bn/robotics/lxh/robot-flamingo/eval_sequences.json', 'w') as f:
++    with open('eval_sequences.json', 'w') as f:
+         json.dump(eval_sequences, f)
++
++
++# =====================================================================================
++# Per-episode paraphrase eval with action+EEF logging.
++# Triggered via env vars EPISODES_JSON, EPISODES_OUTPUT_DIR, EPISODES_START_IDX,
++# EPISODES_END_IDX. Designed for single-task length-1 sequences.
++# =====================================================================================
++
++def _rollout_episode_logged(env, model, task_oracle, init_state_dict, lang_annotation, task_id):
++    """Run one length-1 rollout, capturing per-step actions + eef_xyz.
++    Returns (success, num_steps, actions_list, eef_xyz_list).
++    """
++    robot_obs, scene_obs = get_env_state_for_initial_condition(init_state_dict)
++    env.reset(robot_obs=robot_obs, scene_obs=scene_obs)
++    obs = env.get_obs()
++
++    if '’' in lang_annotation:
++        lang_annotation = lang_annotation.replace('’', "'")
++
++    model.reset()
++    start_info = env.get_info()
++
++    actions_log = []
++    eef_log = []
++    planned_actions = []
++
++    for step in range(EP_LEN):
++        if model.replan != -1 and step % model.replan == 0:
++            if model.model.module.refresh != -1:
++                model.model.module.lang_encoder.lm_head.hidden_state = None
++                model.model.module.lang_encoder.lm_head.history_memory = (
++                    model.model.module.lang_encoder.lm_head.history_memory[-model.refresh:]
++                )
++            else:
++                model.reset()
++        action = model.step(obs, lang_annotation, (len(planned_actions) == 0))
++        if len(planned_actions) == 0:
++            if action.shape == (7,):
++                planned_actions.append(action)
++            else:
++                planned_actions.extend([action[i] for i in range(action.shape[0])])
++        action = planned_actions.pop(0)
++        if model.use_diff:
++            model.action_hist_queue.append(action)
++
++        # log action BEFORE stepping (predicted action)
++        try:
++            actions_log.append(np.asarray(action, dtype=float).reshape(-1).tolist())
++        except Exception:
++            actions_log.append(None)
++
++        obs, _, _, current_info = env.step(action)
++
++        # log EEF position from robot_obs[:3]
++        try:
++            ro = obs['robot_obs']
++            if isinstance(ro, dict):
++                eef = ro.get('tcp_pos') or ro.get('robot_state_full', [None, None, None])[:3]
++            else:
++                eef = np.asarray(ro)[:3]
++            eef_log.append(np.asarray(eef, dtype=float).tolist())
++        except Exception as _e:
++            if step == 0:
++                print(f"[RF eef capture] failed: {_e}, obs keys: {list(obs.keys()) if hasattr(obs,'keys') else type(obs)}")
++            eef_log.append(None)
++
++        current_task_info = task_oracle.get_task_info_for_set(start_info, current_info, {task_id})
++        if len(current_task_info) > 0:
++            return True, step + 1, actions_log, eef_log
++
++    return False, EP_LEN, actions_log, eef_log
++
++
++def evaluate_policy_episodes(model, env, calvin_conf_path):
++    """Run an episode list (paraphrase or baseline). Each episode JSON entry has:
++        episode_idx, init_state, task_id, lang_override, metadata
++    Output: <output_dir>/eval_<task_id>.json (one file per task, list of episodes).
++    """
++    episodes_path = os.environ["EPISODES_JSON"]
++    output_dir = Path(os.environ["EPISODES_OUTPUT_DIR"])
++    start_idx = int(os.environ.get("EPISODES_START_IDX", "0"))
++    end_idx_env = os.environ.get("EPISODES_END_IDX", "")
++
++    output_dir.mkdir(parents=True, exist_ok=True)
++
++    with open(episodes_path) as f:
++        episodes = json.load(f)
++    end_idx = int(end_idx_env) if end_idx_env else len(episodes)
++    sliced = episodes[start_idx:end_idx]
++    print(f"[RF] running {len(sliced)} episodes from {episodes_path} [{start_idx}:{end_idx}]")
++
++    conf_dir = Path(calvin_conf_path)
++    task_cfg = OmegaConf.load(conf_dir / "callbacks/rollout/tasks/new_playtable_tasks.yaml")
++    task_oracle = hydra.utils.instantiate(task_cfg)
++
++    by_task = defaultdict(list)
++    for i, ep in enumerate(tqdm(sliced, position=0, leave=True)):
++        task_id = ep["task_id"]
++        success, n_steps, actions, eef_xyz = _rollout_episode_logged(
++            env, model, task_oracle, ep["init_state"], ep["lang_override"], task_id
++        )
++        record = {
++            "episode_idx": ep["episode_idx"],
++            "task_id": task_id,
++            "lang_override": ep["lang_override"],
++            "success": bool(success),
++            "num_steps": int(n_steps),
++            "actions": actions,
++            "eef_xyz": eef_xyz,
++            "metadata": ep["metadata"],
++        }
++        by_task[task_id].append(record)
++
++        # flush per-task JSON every 20 episodes (resilient to OOM/crash)
++        if (i + 1) % 20 == 0 or i == len(sliced) - 1:
++            for tid, recs in by_task.items():
++                out_path = output_dir / f"eval_{tid}__chunk{start_idx}_{end_idx}.json"
++                with open(out_path, "w") as f:
++                    json.dump({"task_id": tid, "episodes": recs}, f)
++
++    # final flush
++    for tid, recs in by_task.items():
++        out_path = output_dir / f"eval_{tid}__chunk{start_idx}_{end_idx}.json"
++        with open(out_path, "w") as f:
++            json.dump({"task_id": tid, "episodes": recs}, f)
++    print(f"[RF] wrote {sum(len(v) for v in by_task.values())} episodes -> {output_dir}")
++
++
++def eval_one_epoch_calvin_episodes(args, model, dataset_path, image_processor, tokenizer, future_act_len=-1):
++    """Entrypoint when EPISODES_JSON is set."""
++    env = make_env(dataset_path)
++    cast_dtype = get_cast_dtype(args.precision)
++    hist_len = None
++    if args.head_type == "diffusion":
++        hist_len = args.n_obs_steps
++    elif args.pad_length != -1:
++        hist_len = args.pad_length
++    wrapped_model = ModelWrapper(
++        model, tokenizer, image_processor, cast_dtype,
++        args.head_type == "diffusion", history_len=hist_len, future_act_len=future_act_len,
++    )
++    evaluate_policy_episodes(wrapped_model, env, args.calvin_conf_path)
+diff --git a/robot_flamingo/models/factory.py b/robot_flamingo/models/factory.py
+index 807463c..f3e3158 100755
+--- a/robot_flamingo/models/factory.py
++++ b/robot_flamingo/models/factory.py
+@@ -16,10 +16,10 @@ mpt_dict = {
+         "openflamingo_checkpoint": "path_to/OpenFlamingo-3B-vitl-mpt1b/checkpoint.pt"
+     }, 
+     "mpt_dolly_3b": {
+-        "lang_encoder_path": "path_to/mpt-1b-redpajama-200b-dolly", 
+-        "tokenizer_path": "path_to/mpt-1b-redpajama-200b-dolly", 
++        "lang_encoder_path": "../checkpoints/roboflamingo/mpt-1b-redpajama-200b-dolly",
++        "tokenizer_path": "../checkpoints/roboflamingo/mpt-1b-redpajama-200b-dolly",
+         "cross_attn_every_n_layers": 1,
+-        "openflamingo_checkpoint": "path_to/OpenFlamingo-3B-vitl-mpt1b-langinstruct/checkpoint.pt"
++        "openflamingo_checkpoint": "../checkpoints/roboflamingo/OpenFlamingo-3B-vitl-mpt1b-langinstruct/checkpoint.pt"
+     },
+     "mpt_4b": {
+         "lang_encoder_path": "path_to/RedPajama-INCITE-Instruct-3B-v1", 
+diff --git a/robot_flamingo/utils.py b/robot_flamingo/utils.py
+index fba50df..941b8e8 100644
+--- a/robot_flamingo/utils.py
++++ b/robot_flamingo/utils.py
+@@ -1,12 +1,19 @@
+ import logging
+ 
+ import numpy as np
+-from pytorch3d.transforms import (
+-    euler_angles_to_matrix,
+-    matrix_to_euler_angles,
+-    matrix_to_quaternion,
+-    quaternion_to_matrix,
+-)
++try:
++    from pytorch3d.transforms import (
++        euler_angles_to_matrix,
++        matrix_to_euler_angles,
++        matrix_to_quaternion,
++        quaternion_to_matrix,
++    )
++except ImportError:
++    # pytorch3d unavailable on modern systems. world_to_tcp_frame / tcp_to_world_frame
++    # are only used when tcp_rel=True; our checkpoint (no 'tcp' in name) doesn't trigger them.
++    def _missing_pytorch3d(*a, **kw):
++        raise RuntimeError("pytorch3d not installed; tcp_rel transforms unavailable")
++    euler_angles_to_matrix = matrix_to_euler_angles = matrix_to_quaternion = quaternion_to_matrix = _missing_pytorch3d
+ import torch
+ from torch.cuda.amp import autocast
+ 

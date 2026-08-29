@@ -1,0 +1,67 @@
+# ---- Cloned upstream repos (see eval_guides/) ----
+calvin/
+flower_vla_calvin/
+RoboFlamingo/
+
+# ---- Model weights & dataset (see eval_guides/) ----
+checkpoints/
+calvin_data/
+
+# ---- Raw eval output ----
+# Per-episode results carry full action + EEF trajectories (GBs).
+paraphrase_eval/results/
+paraphrase_eval/logs/
+paraphrase_eval/analysis/outputs/
+paraphrase_eval/analysis/cache/
+
+# ---- Episode files: only seed 7 was used for the published numbers ----
+paraphrase_eval/episodes/*
+!paraphrase_eval/episodes/baseline_seed7.json
+!paraphrase_eval/episodes/paraphrase_seed7.json
+
+# ---- Inference-seed sweep (not part of the published protocol) ----
+paraphrase_eval/run_*_seeds_8_11.sh
+paraphrase_eval/run_rf_only_v4.sh
+
+# ---- Generated figures ----
+# RESULTS/ ships numbers only; regenerate every figure with the analysis
+# scripts (see RESULTS/README.md). The one committed image is the scene
+# overview in images/.
+RESULTS/**/*.png
+RESULTS/**/*.pdf
+RESULTS/scene/
+RESULTS/overview_multiseed/
+# Pivot CSVs duplicate what __category_breakdown.csv already carries.
+RESULTS/*_obj_x_act.csv
+
+# ---- Superseded v1 pipeline ----
+# Annotation-YAML-swap approach, replaced by paraphrase_eval/.
+/results/
+/_archive_ud_vla/
+/run_flower_*.sh
+/run_roboflamingo_*.sh
+/run_ud_vla_sanity.sh
+/single_task_flower.py
+/build_singletask_sequences.py
+/flower_singletask_sequences.json
+
+# ---- One-off setup / sanity scripts ----
+_load_*.py
+_verify_*.py
+_dl_*.py
+test_env_load.py
+paraphrase_eval/analysis/_check.py
+
+# Superseded: model_summary.py generalizes flower_summary.py, and
+# compute_neargt_fargt_v2.py replaces the single-envelope v1.
+paraphrase_eval/analysis/flower_summary.py
+paraphrase_eval/analysis/compute_neargt_fargt.py
+
+# ---- Misc ----
+__pycache__/
+*.pyc
+*.mp4
+MUJOCO_LOG.TXT
+outputs/
+wandb/
+Screenshot*.png

@@ -1,0 +1,14 @@
+idx,high,mid,low
+0,obj,lexical,same_polarity_habitual
+1,obj,lexical,same_polarity_contextual
+2,obj,lexical,addition_deletion
+3,act,lexical,same_polarity_habitual
+4,act,lexical,same_polarity_contextual
+5,act,lexical,addition_deletion
+7,act,structural,coordination
+8,act,structural,subordination
+9,act,pragmatical,need_statement
+10,act,pragmatical,embedded_imperative
+11,act,pragmatical,permission_directive
+12,act,pragmatical,question_directive
+13,act,pragmatical,hint

@@ -1,0 +1,16 @@
+task_id,sr_pct,n
+close_drawer,40.3,129
+lift_blue_block_table,63.6,129
+lift_red_block_slider,27.9,129
+lift_red_block_table,58.9,129
+move_slider_left,63.6,129
+move_slider_right,48.8,129
+open_drawer,63.6,129
+push_red_block_left,55.8,129
+push_red_block_right,32.6,129
+rotate_red_block_left,41.9,129
+rotate_red_block_right,33.3,129
+turn_off_led,78.3,129
+turn_off_lightbulb,34.9,129
+turn_on_led,79.1,129
+turn_on_lightbulb,74.4,129

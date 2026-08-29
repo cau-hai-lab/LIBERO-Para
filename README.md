@@ -43,9 +43,10 @@ Robotic manipulation instructions are fundamentally structured around *what to a
 ## Highlights
 
 - **Unified benchmark**: LIBERO-Para extends [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO) with 4,000+ paraphrased instructions across 10 evaluation scenarios, all in a single repository.
-- **Multi-model evaluation**: 6 VLA models integrated with per-model conda environments, standalone eval scripts, and step-by-step guides — clone, install, and run.
+- **Multi-model evaluation**: 6 VLA models integrated with per-model conda environments, standalone eval scripts, and step-by-step guides. Clone, install, and run.
 - **Original LIBERO compatible**: All original LIBERO suites (Spatial, Object, Goal, LIBERO-10, LIBERO-90) are preserved and can be evaluated from the same codebase.
 - **PRIDE metric**: A new difficulty-aware metric that goes beyond binary success rate, giving more credit for succeeding on harder paraphrases.
+- **Cross-benchmark validation**: [CALVIN-Para](calvin-para/) applies the same taxonomy and metric to CALVIN, confirming the findings transfer across simulators, robots, and task families.
 
 ---
 
@@ -72,7 +73,7 @@ Each model is evaluated using a custom standalone script under [`eval_scripts/ex
 
 **PRIDE** (**P**araphrase **R**obustness **I**ndex in Robotic **I**nstructional **DE**viation) evaluates how robustly a VLA model handles paraphrased instructions.
 
-It computes a **Paraphrase Distance (PD)** from keyword similarity (S<sub>K</sub>) and structural similarity (S<sub>T</sub>), then measures the ratio of PD-weighted successes to total possible PD, normalized to 0–100. Unlike plain success rate, PRIDE gives more credit for succeeding on harder, more deviated paraphrases.
+It computes a **Paraphrase Distance (PD)** from keyword similarity (S<sub>K</sub>) and structural similarity (S<sub>T</sub>), then measures the ratio of PD-weighted successes to total possible PD, normalized to 0 through 100. Unlike plain success rate, PRIDE gives more credit for succeeding on harder, more deviated paraphrases.
 
 > **Details**: [metrics/README.md](metrics/README.md) &nbsp;|&nbsp; **Interactive**: [PRIDE_metric_playground.ipynb](metrics/PRIDE_metric_playground.ipynb)
 
@@ -102,6 +103,25 @@ python metrics/analyze_results.py \
 
 > See [metrics/README.md](metrics/README.md) for multi-model comparison, PRIDE sweep, and more.
 
+### Cross-Benchmark: CALVIN-Para
+
+Is paraphrase brittleness a quirk of LIBERO, or a property of VLA models in general?
+[**CALVIN-Para**](calvin-para/) ports the same 43-cell paraphrase taxonomy and the same
+PRIDE metric onto [CALVIN](https://github.com/mees/calvin), a different simulator, robot,
+and task family, with **1,935 paraphrased instructions** over 15 CALVIN tasks, evaluated on
+FLOWER and RoboFlamingo.
+
+Every episode logs its full end-effector trajectory, so failures are classified beyond
+pass/fail: nearly succeeded, executed a different task, or wandered off entirely.
+
+> **Details**: [calvin-para/README.md](calvin-para/README.md) &nbsp;|&nbsp; **Setup guides**: [calvin-para/eval_guides/](calvin-para/eval_guides/) &nbsp;|&nbsp; Paper: Appendix E
+
+### Paraphrase Generation
+
+The LLM generator + verifier used to build both benchmarks' paraphrase sets lives in
+[`paraphrase_generation/`](paraphrase_generation/): prompt templates, the 43-cell taxonomy
+definitions, and the generate, verify, and merge pipeline.
+
 ---
 
 ## Project Structure
@@ -122,6 +142,12 @@ LIBERO-Para/
 │   └── xiaomi-robotics-0/         # Clone: github.com/XiaomiRobotics/Xiaomi-Robotics-0
 ├── logs_para/                     # Evaluation results
 │   └── example_xiaomi-robotics-0/ # Example data (seed7)
+├── paraphrase_generation/         # LLM paraphrase generator + verifier
+├── calvin-para/                   # Cross-benchmark: CALVIN paraphrase robustness
+│   ├── paraphrase_eval/           # Episode builder, runners, analysis
+│   ├── eval_guides/               # Per-model setup guides
+│   ├── patches/                   # Per-episode eval patches for model repos
+│   └── RESULTS/                   # Figures and tables
 ├── images/
 ├── benchmark_scripts/
 └── scripts/
@@ -129,13 +155,8 @@ LIBERO-Para/
 
 ---
 
-## TODO
-
-- [ ] Release the **paraphrase generation pipeline** (LLM-based generator + verifier used to produce the 4 092 LIBERO-Para paraphrases)
-- [ ] Release **CALVIN-Para** — paraphrase-robustness benchmark for CALVIN, for cross-benchmark transferability tests of PRIDE
-
----
-
 ## Acknowledgement
 
 This project is built upon [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO) by Bo Liu, Yifeng Zhu, Chongkai Gao, Yihao Feng, Qiang Liu, Yuke Zhu, and Peter Stone.
+
+The cross-benchmark evaluation is built upon [CALVIN](https://github.com/mees/calvin) by Oier Mees, Lukas Hermann, Erick Rosete-Beas, and Wolfram Burgard.

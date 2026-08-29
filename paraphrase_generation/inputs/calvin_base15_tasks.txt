@@ -1,0 +1,26 @@
+# 15 base tasks (CALVIN single-task eval feasible).
+# Filtered from base20 by check_singletask_feasibility.py — these are the
+# tasks that appear as the FIRST slot in randomly sampled CALVIN sequences
+# (i.e. no prerequisite manipulation needed for the initial state).
+#
+# Dropped (0 first-slot occurrences in 20k sampled sequences):
+#   lift_red_block_drawer  (block must already be in drawer)
+#   place_in_slider        (gripper must already hold a block)
+#   place_in_drawer        (same)
+#   stack_block            (gripper must already hold a block)
+#   unstack_block          (blocks must already be stacked)
+open_drawer
+close_drawer
+move_slider_left
+move_slider_right
+turn_on_lightbulb
+turn_off_lightbulb
+turn_on_led
+turn_off_led
+lift_red_block_table
+lift_blue_block_table
+lift_red_block_slider
+push_red_block_right
+push_red_block_left
+rotate_red_block_left
+rotate_red_block_right

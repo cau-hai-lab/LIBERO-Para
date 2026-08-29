@@ -1,0 +1,167 @@
+diff --git a/flower/evaluation/flower_evaluate.py b/flower/evaluation/flower_evaluate.py
+index 61f08b6..0e06764 100644
+--- a/flower/evaluation/flower_evaluate.py
++++ b/flower/evaluation/flower_evaluate.py
+@@ -40,8 +40,8 @@ def get_log_dir(log_dir):
+         if not log_dir.exists():
+             log_dir = Path("/tmp/evaluation")
+ 
+-    log_dir = log_dir / "logs" / time.strftime("%Y-%m-%d_%H-%M-%S")
+-    os.makedirs(log_dir, exist_ok=False)
++    log_dir = log_dir / "logs" / (time.strftime("%Y-%m-%d_%H-%M-%S") + f"_pid{os.getpid()}")
++    os.makedirs(log_dir, exist_ok=True)
+     print(f"logging to {log_dir}")
+     return log_dir
+ 
+@@ -220,11 +220,104 @@ def rollout(env, model, task_oracle, cfg, subtask, lang_embeddings, val_annotati
+     return False
+ 
+ 
++# =====================================================================================
++# Per-episode paraphrase eval with action+EEF logging.
++# Triggered via env vars EPISODES_JSON, EPISODES_OUTPUT_DIR,
++# EPISODES_START_IDX, EPISODES_END_IDX.
++# =====================================================================================
++
++def evaluate_policy_episodes(model, env, cfg):
++    episodes_path = os.environ["EPISODES_JSON"]
++    output_dir = Path(os.environ["EPISODES_OUTPUT_DIR"])
++    start_idx = int(os.environ.get("EPISODES_START_IDX", "0"))
++    end_idx_env = os.environ.get("EPISODES_END_IDX", "")
++
++    output_dir.mkdir(parents=True, exist_ok=True)
++
++    with open(episodes_path) as f:
++        episodes = json.load(f)
++    end_idx = int(end_idx_env) if end_idx_env else len(episodes)
++    sliced = episodes[start_idx:end_idx]
++    print(f"[FLOWER] running {len(sliced)} episodes from {episodes_path} [{start_idx}:{end_idx}]")
++
++    # build task_oracle from CALVIN conf so we can reuse its success checker
++    import hydra as _hydra
++    conf_dir = Path(cfg.train_folder) / ".hydra"
++    task_cfg_path = Path(__file__).resolve().parents[3] / "calvin" / "calvin_models" / "conf" / "callbacks" / "rollout" / "tasks" / "new_playtable_tasks.yaml"
++    task_cfg = OmegaConf.load(task_cfg_path)
++    task_oracle = _hydra.utils.instantiate(task_cfg)
++
++    by_task = defaultdict(list)
++    for i, ep in enumerate(tqdm(sliced, position=0, leave=True)):
++        task_id = ep["task_id"]
++        robot_obs, scene_obs = get_env_state_for_initial_condition(ep["init_state"])
++        env.reset(robot_obs=robot_obs, scene_obs=scene_obs)
++        obs = env.get_obs()
++        lang_annotation = ep["lang_override"]
++        goal = {"lang_text": lang_annotation}
++        model.reset()
++        start_info = env.get_info()
++
++        actions_log = []
++        eef_log = []
++        success = False
++        n_steps = cfg.ep_len
++        for step in range(cfg.ep_len):
++            action = model.step(obs, goal)
++            try:
++                actions_log.append(np.asarray(action.cpu() if hasattr(action, 'cpu') else action, dtype=float).reshape(-1).tolist())
++            except Exception:
++                actions_log.append(None)
++            obs, _, _, current_info = env.step(action)
++            try:
++                # FLOWER wraps obs: 'robot_obs' is a CUDA tensor; 'robot_obs_raw' is the numpy array
++                ro = obs.get('robot_obs_raw', obs['robot_obs'])
++                if hasattr(ro, 'cpu'):
++                    ro = ro.cpu().numpy()
++                eef_log.append(np.asarray(ro, dtype=float).reshape(-1)[:3].tolist())
++            except Exception as _e:
++                if step == 0:
++                    print(f"[FLOWER eef capture] failed: {_e}, obs keys: {list(obs.keys()) if hasattr(obs,'keys') else type(obs)}")
++                eef_log.append(None)
++            current_task_info = task_oracle.get_task_info_for_set(start_info, current_info, {task_id})
++            if len(current_task_info) > 0:
++                success = True
++                n_steps = step + 1
++                break
++
++        record = {
++            "episode_idx": ep["episode_idx"],
++            "task_id": task_id,
++            "lang_override": lang_annotation,
++            "success": bool(success),
++            "num_steps": int(n_steps),
++            "actions": actions_log,
++            "eef_xyz": eef_log,
++            "metadata": ep["metadata"],
++        }
++        by_task[task_id].append(record)
++
++        if (i + 1) % 20 == 0 or i == len(sliced) - 1:
++            for tid, recs in by_task.items():
++                out_path = output_dir / f"eval_{tid}__chunk{start_idx}_{end_idx}.json"
++                with open(out_path, "w") as f:
++                    json.dump({"task_id": tid, "episodes": recs}, f)
++
++    for tid, recs in by_task.items():
++        out_path = output_dir / f"eval_{tid}__chunk{start_idx}_{end_idx}.json"
++        with open(out_path, "w") as f:
++            json.dump({"task_id": tid, "episodes": recs}, f)
++    print(f"[FLOWER] wrote {sum(len(v) for v in by_task.values())} episodes -> {output_dir}")
++
++
+ @hydra.main(config_path="../../conf", config_name="eval_calvin")
+ def main(cfg):
+     log_wandb = cfg.log_wandb
+     # torch.cuda.set_device(cfg.device)
+-    seed_everything(0, workers=True) 
++    _override = os.environ.get("INFERENCE_SEED")
++    _seed = int(_override) if _override else 0
++    print(f"[seed] inference seed = {_seed} (override={_override is not None})")
++    seed_everything(_seed, workers=True) 
+     lang_embeddings = None
+     env = None
+     results = {}
+@@ -262,6 +355,11 @@ def main(cfg):
+             # dir=log_dir / "wandb",
+         )
+ 
++    if os.environ.get("EPISODES_JSON"):
++        evaluate_policy_episodes(model, env, cfg)
++        if log_wandb:
++            run.finish()
++        return
+     results[Path(cfg.checkpoint)], plans[Path(cfg.checkpoint)] = evaluate_policy(model, env, lang_embeddings, cfg, num_videos=cfg.num_videos, save_dir=Path(log_dir))
+     print_and_save(results, plans, cfg, log_dir=log_dir)
+     
+diff --git a/flower/evaluation/multistep_sequences.py b/flower/evaluation/multistep_sequences.py
+index c944f40..18c5c2a 100644
+--- a/flower/evaluation/multistep_sequences.py
++++ b/flower/evaluation/multistep_sequences.py
+@@ -350,6 +350,14 @@ def flatten(t):
+ 
+ @functools.lru_cache
+ def get_sequences(num_sequences=1000, num_workers=None):
++    # Optional override: load custom sequences from JSON (used for single-task eval)
++    import os, json
++    _override = os.environ.get("FLOWER_SEQUENCES_JSON")
++    if _override:
++        with open(_override) as _f:
++            _data = json.load(_f)
++        # JSON: list of [initial_state_dict, [task_name]] -> convert task list to np.array
++        return [(d[0], np.array(d[1])) for d in _data]
+     possible_conditions = {
+         "led": [0, 1],
+         "lightbulb": [0, 1],
+diff --git a/flower/models/flower.py b/flower/models/flower.py
+index ea6a0af..11a522e 100644
+--- a/flower/models/flower.py
++++ b/flower/models/flower.py
+@@ -229,6 +229,10 @@ class FLOWERVLA(pl.LightningModule):
+             # Handle language encoder/model naming mismatch
+             if "vlm.language_encoder." in new_key:
+                 new_key = new_key.replace("vlm.language_encoder.", "vlm.language_model.model.encoder.")
++            if "vlm.language_shared." in new_key:
++                new_key = new_key.replace("vlm.language_shared.", "vlm.language_model.model.shared.")
++            if new_key == "vlm.language_final_logits_bias":
++                new_key = "vlm.language_model.final_logits_bias"
+             #elif "vlm.language_model." in new_key and "vlm.language_model.model." not in new_key:
+                 # If it's already language_model but missing the nested structure, add it
+                 #new_key = new_key.replace("vlm.language_model.", "vlm.language_model.model.encoder.")

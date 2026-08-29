@@ -1,0 +1,16 @@
+key,instruction
+open_drawer,pull the handle to open the drawer
+close_drawer,push the handle to close the drawer
+move_slider_left,push the sliding door to the left side
+move_slider_right,push the sliding door to the right side
+turn_on_lightbulb,use the switch to turn on the light bulb
+turn_off_lightbulb,use the switch to turn off the light bulb
+turn_on_led,press the button to turn on the led light
+turn_off_led,press the button to turn off the led light
+lift_red_block_table,grasp and lift the red block
+lift_blue_block_table,grasp and lift the blue block
+lift_red_block_slider,lift the red block from the sliding cabinet
+push_red_block_right,go push the red block right
+push_red_block_left,go push the red block left
+rotate_red_block_left,take the red block and rotate it to the left
+rotate_red_block_right,take the red block and rotate it to the right

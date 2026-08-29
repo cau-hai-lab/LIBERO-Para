@@ -35,10 +35,7 @@ eval_scripts/xiaomi-robotics-0/
 # Downloaded analysis data
 260301_analysis/
 
-# CALVIN cross-benchmark setup (env, model weights, dataset)
-calvin-para/
-
-# Paraphrase generation pipeline (LLM outputs, API-keyed scripts)
-paraphrase_generation/
+# calvin-para/ and paraphrase_generation/ are tracked; each carries its own
+# .gitignore for cloned repos, weights, datasets, and raw LLM output.
 
 test_260507/

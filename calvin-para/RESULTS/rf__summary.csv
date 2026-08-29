@@ -1,0 +1,12 @@
+metric,value
+CALVIN canonical SR (%),92.33
+CALVIN-Para overall SR (%),53.13
+CALVIN-Para PRIDE (alpha=0.5),43.5
+Obj-preserving SR (%),69.84
+Obj-paraphrased SR (%),37.17
+NearGT % of all,3.37
+NearGT % of failures,7.64
+FarGT total % of all,40.73
+FarGT total % of failures,92.36
+Unmatched % of failures,79.11
+Cross-NearGT % of failures,13.25
