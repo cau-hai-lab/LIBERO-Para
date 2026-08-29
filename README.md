@@ -109,7 +109,7 @@ Is paraphrase brittleness a quirk of LIBERO, or a property of VLA models in gene
 [**CALVIN-Para**](calvin-para/) ports the same 43-cell paraphrase taxonomy and the same
 PRIDE metric onto [CALVIN](https://github.com/mees/calvin), a different simulator, robot,
 and task family, with **1,935 paraphrased instructions** over 15 CALVIN tasks, evaluated on
-FLOWER and RoboFlamingo.
+FLOWER and RoboFlamingo. **All three findings reproduce.**
 
 Every episode logs its full end-effector trajectory, so failures are classified beyond
 pass/fail: nearly succeeded, executed a different task, or wandered off entirely.
