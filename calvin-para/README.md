@@ -4,7 +4,10 @@
 
 **Paraphrase-robustness benchmark for CALVIN, for cross-benchmark transferability tests of PRIDE**
 
-*Paper: Appendix E*
+<p>
+<a href="https://huggingface.co/datasets/HAI-Lab/CALVIN-Para"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20HuggingFace-Dataset-FFD21E?style=for-the-badge" alt="HuggingFace Dataset"></a>
+<a href="https://arxiv.org/pdf/2603.28301"><img src="https://img.shields.io/badge/arXiv-Appendix%20E-B31B1B?style=for-the-badge&logo=arxiv&logoColor=white" alt="Paper"></a>
+</p>
 
 <img src="images/calvin_para_overview.png" alt="CALVIN-Para: the 15 canonical instructions and the scene objects they refer to" width="820">
 

@@ -114,7 +114,7 @@ FLOWER and RoboFlamingo.
 Every episode logs its full end-effector trajectory, so failures are classified beyond
 pass/fail: nearly succeeded, executed a different task, or wandered off entirely.
 
-> **Details**: [calvin-para/README.md](calvin-para/README.md) &nbsp;|&nbsp; **Setup guides**: [calvin-para/eval_guides/](calvin-para/eval_guides/) &nbsp;|&nbsp; Paper: Appendix E
+> **Details**: [calvin-para/README.md](calvin-para/README.md) &nbsp;|&nbsp; **Setup guides**: [calvin-para/eval_guides/](calvin-para/eval_guides/) &nbsp;|&nbsp; **Dataset**: [HAI-Lab/CALVIN-Para](https://huggingface.co/datasets/HAI-Lab/CALVIN-Para) &nbsp;|&nbsp; Paper: Appendix E
 
 ### Paraphrase Generation
 
