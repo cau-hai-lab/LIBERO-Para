@@ -155,6 +155,25 @@ LIBERO-Para/
 
 ---
 
+## Citation
+
+```bibtex
+@inproceedings{kim-etal-2026-libero,
+    title     = "{LIBERO}-Para: A Diagnostic Benchmark and Metrics for Paraphrase Robustness in {VLA} Models",
+    author    = "Kim, Chanyoung and Kim, Minwoo and Kang, Minseok and Kim, Hyunwoo and Jung, Dahuin",
+    booktitle = "Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing",
+    month     = oct,
+    year      = "2026",
+    address   = "Budapest, Hungary",
+    publisher = "Association for Computational Linguistics",
+    url       = "https://aclanthology.org/2026.emnlp-main.101/",
+    doi       = "10.18653/2026.emnlp-main.101",
+    pages     = "2378--2414",
+}
+```
+
+---
+
 ## Acknowledgement
 
 This project is built upon [LIBERO](https://github.com/Lifelong-Robot-Learning/LIBERO) by Bo Liu, Yifeng Zhu, Chongkai Gao, Yihao Feng, Qiang Liu, Yuke Zhu, and Peter Stone.
